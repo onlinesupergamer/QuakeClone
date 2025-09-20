@@ -8,6 +8,14 @@ public class PlayerInputs : MonoBehaviour
     [SerializeField]
     Vector2 MovementInput = Vector2.zero;
 
+    /*
+     * We can create simple inputs like this:
+     * public bool bIsJumping = Input.GetKeyDown(KeyCode.Space);
+     * This is useful to let the playercontroller check for the inputs this way 
+     * and keep the inputs organized here
+     *
+     */
+
 
     void Start()
     {
