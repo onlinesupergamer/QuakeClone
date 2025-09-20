@@ -21,7 +21,7 @@ public class LevelMusic : MonoBehaviour
         {
             if (MusicClips.Length < 1 || MusicClips[SongIndex] == null) 
             {
-                Debug.LogError("Either no music found in list, or SongIndex is empty!");
+                Debug.LogWarning("Either no music found in list, or SongIndex is empty!");
                 return;
             }
 

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class PlayerInputs : MonoBehaviour
@@ -8,24 +9,46 @@ public class PlayerInputs : MonoBehaviour
     [SerializeField]
     Vector2 MovementInput = Vector2.zero;
 
+    public DeveloperConsole console;
+
     /*
      * We can create simple inputs like this:
      * public bool bIsJumping = Input.GetKeyDown(KeyCode.Space);
      * This is useful to let the playercontroller check for the inputs this way 
      * and keep the inputs organized here
      *
+     *  -The Antman
      */
 
 
     void Start()
     {
-        
+        /*
+            TEMP:
+            This is just for a quick way to lock mouse, should probably be moved to a better location    
+            
+         */
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     
     void Update()
     {
-        
+        if (Input.GetKeyDown(KeyCode.BackQuote)) 
+        {
+            if (console.bIsConsoleOpen)
+            {
+                console.OpenConsole();
+            }
+            else 
+            {
+                console.OpenConsole();
+
+            }
+
+        }
     }
 
     public Vector2 GetMouseInput() 
