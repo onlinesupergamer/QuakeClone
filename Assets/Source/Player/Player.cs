@@ -10,6 +10,8 @@ public class Player : MonoBehaviour
     public float MovementSpeed;
     public float CameraSensitivity;
 
+    Vector3 GravityDir = new Vector3(0, -1, 0); //It's negative because gravity goes down
+
 
     void Start()
     {
@@ -35,7 +37,6 @@ public class Player : MonoBehaviour
         Vector3 RightVec = transform.right * Inputs.GetMovementInput()[1];
         NewMovement = ForwardVec + RightVec;
         NewMovement.y = 0;
-        Vector3 GravityDir = new Vector3(0, -1, 0); //It's negative because gravity goes down
 
         //Currently working out which controller model would be best
         //PlayerRigidbody.AddForce(NewMovement * MovementSpeed); 
