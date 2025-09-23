@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -9,7 +10,7 @@ public class Player : MonoBehaviour
     public Camera ViewmodelCamera;
     public PlayerInputs Inputs;
     public float MovementSpeed;
-    
+
     public float GravityForce;
 
     [Header("In-Game Camera Settings")]
@@ -20,6 +21,12 @@ public class Player : MonoBehaviour
     public float ViewmodelFOV;
     public bool bCanUserInput = true;
 
+    public GameObject PrimaryWeapon;
+    public GameObject SecondaryWeapon;
+    public GameObject CurrentWeapon;
+    public GameObject WeaponTransform;
+
+    [SerializeField]int CurrentWeaponIndex = 0;
 
     Vector3 GravityDir = new Vector3(0, -1, 0); //It's negative because gravity goes down
 
@@ -27,22 +34,47 @@ public class Player : MonoBehaviour
     [SerializeField] float XRot; //XRot is for the camera pitch rotation... it happens to be rotating the X axis so
                                  //try not to get confused about that, X is the Camera pitch
 
+    void Awake() 
+    {
+        
+    }
+
     void Start()
     {
         
     }
 
-    
     void Update()
     {
         HandleMovement();
         HandleGravity();
+
 
         //This is just to debug in Editor:
         //If the player changes these in-game, we need a method to do this only when called manually
 
         //PlayerCamera.fieldOfView = PlayerCameraFOV;
         //ViewmodelCamera.fieldOfView = ViewmodelFOV;
+
+        if (Inputs.bIsFiring) 
+        {
+            /*
+             Set both primary and secondary weapons to be instantiated at start
+              and just set the non current weapon to inactive
+             */
+            CurrentWeapon.GetComponent<Weapon>().FireWeapon();
+
+
+        }
+
+        if (Inputs.MouseScrollDelta > 0) 
+        {
+            SwitchCurrentWeapon(1);
+        }
+        if (Inputs.MouseScrollDelta < 0) 
+        {
+            SwitchCurrentWeapon(-1);
+        }
 
     }
 
@@ -63,6 +95,7 @@ public class Player : MonoBehaviour
 
         //Currently working out which controller model would be best
         //It seems like a normal Character Controller will be it
+        //Nvm, we want physics so it has to be a rigidbody; doing that with a character controller would take a long ass time
 
         //PlayerRigidbody.AddForce(NewMovement * MovementSpeed); 
         PlayerController.Move(NewMovement * (MovementSpeed * Time.deltaTime));
@@ -107,4 +140,55 @@ public class Player : MonoBehaviour
         //This is very simple, we want to do more here but this will work for now
         PlayerController.Move(GravityDir * (GravityForce * Time.deltaTime));
     }
+
+    void SwitchCurrentWeapon(int Direction) 
+    {
+        switch (Direction) 
+        {
+            case 1:
+                if (CurrentWeaponIndex == 0)
+                {
+                    CurrentWeaponIndex++;
+                }
+                else 
+                {
+                    CurrentWeaponIndex = 0;
+                }
+                    break;
+
+            case -1:
+                if (CurrentWeaponIndex == 1)
+                {
+                    CurrentWeaponIndex--;
+                }
+                else
+                {
+                    CurrentWeaponIndex = 1;
+                }
+                    break;
+        }
+        SwapCurrentWeapon(CurrentWeaponIndex);
+
+        //I guess this works, but I hate it
+        
+    }
+
+    void SwapCurrentWeapon(int WeaponIndex) 
+    {
+        if (WeaponIndex == 0) 
+        {
+            PrimaryWeapon.SetActive(true);
+            SecondaryWeapon.SetActive(false);
+            CurrentWeapon = PrimaryWeapon;
+        }
+
+        if (WeaponIndex == 1) 
+        {
+            PrimaryWeapon.SetActive(false);
+            SecondaryWeapon.SetActive(true);
+            CurrentWeapon = SecondaryWeapon;
+
+        }
+    }
+
 }

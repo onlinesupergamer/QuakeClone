@@ -10,6 +10,8 @@ public class PlayerInputs : MonoBehaviour
     Vector2 MovementInput = Vector2.zero;
 
     public DeveloperConsole console;
+    public float MouseScrollDelta;
+    public bool bIsFiring = false;
 
     /*
      * We can create simple inputs like this:
@@ -28,6 +30,7 @@ public class PlayerInputs : MonoBehaviour
             This is just for a quick way to lock mouse, should probably be moved to a better location    
             
          */
+
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -49,6 +52,9 @@ public class PlayerInputs : MonoBehaviour
             }
 
         }
+
+        bIsFiring = Input.GetKey(KeyCode.Mouse0);
+        MouseScrollDelta = Input.mouseScrollDelta[1];
     }
 
     public Vector2 GetMouseInput() 
