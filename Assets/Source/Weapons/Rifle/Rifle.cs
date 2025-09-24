@@ -12,8 +12,10 @@ public class Rifle : Weapon
         if (Physics.Raycast(ray, out Hit, Mathf.Infinity))
         {
 
+
         }
 
+        Debug.DrawLine(mPlayer.PlayerCamera.transform.position, mPlayer.PlayerCamera.transform.forward * 35, Color.aliceBlue, 5.0f);
     }
 
 }

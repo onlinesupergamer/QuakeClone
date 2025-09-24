@@ -5,13 +5,17 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public CharacterController PlayerController;
+
+    [Header("General Player Settings")]
+
+    public Rigidbody PlayerRigidbody;
     public Camera PlayerCamera;
     public Camera ViewmodelCamera;
     public PlayerInputs Inputs;
     public float MovementSpeed;
-
+    public bool bCanUserInput = true;
     public float GravityForce;
+    public float JumpForce;
 
     [Header("In-Game Camera Settings")]
 
@@ -19,20 +23,26 @@ public class Player : MonoBehaviour
     public float CameraSensitivity;
     public float PlayerCameraFOV;
     public float ViewmodelFOV;
-    public bool bCanUserInput = true;
 
+
+    [Header("Misc")]
+
+    public LayerMask GroundMask;
     public GameObject PrimaryWeapon;
     public GameObject SecondaryWeapon;
     public GameObject CurrentWeapon;
     public GameObject WeaponTransform;
 
-    [SerializeField]int CurrentWeaponIndex = 0;
+
+    int CurrentWeaponIndex = 0;
 
     Vector3 GravityDir = new Vector3(0, -1, 0); //It's negative because gravity goes down
 
+    float XRot; //XRot is for the camera pitch rotation... it happens to be rotating the X axis so
+                //try not to get confused about that, X is the Camera pitch
 
-    [SerializeField] float XRot; //XRot is for the camera pitch rotation... it happens to be rotating the X axis so
-                                 //try not to get confused about that, X is the Camera pitch
+    bool bIsGrounded;
+
 
     void Awake() 
     {
@@ -44,12 +54,17 @@ public class Player : MonoBehaviour
         
     }
 
+    private void FixedUpdate()
+    {
+        PlayerGroundCast();
+        HandleGravity();
+        HandleMovement();
+        HandleCamera();
+
+    }
+
     void Update()
     {
-        HandleMovement();
-        HandleGravity();
-
-
         //This is just to debug in Editor:
         //If the player changes these in-game, we need a method to do this only when called manually
 
@@ -62,9 +77,14 @@ public class Player : MonoBehaviour
              Set both primary and secondary weapons to be instantiated at start
               and just set the non current weapon to inactive
              */
-            CurrentWeapon.GetComponent<Weapon>().FireWeapon();
+            CurrentWeapon.GetComponent<Weapon>().FireWeapon(); //This could be optimized
 
 
+        }
+
+        if (Inputs.bIsJumping && bIsGrounded) 
+        {
+            PlayerRigidbody.AddForce(new Vector3(0, 1, 0) * JumpForce, ForceMode.VelocityChange);
         }
 
         if (Inputs.MouseScrollDelta > 0) 
@@ -80,7 +100,6 @@ public class Player : MonoBehaviour
 
     private void LateUpdate()
     {
-        HandleCamera();
     }
 
     void HandleMovement() 
@@ -97,8 +116,10 @@ public class Player : MonoBehaviour
         //It seems like a normal Character Controller will be it
         //Nvm, we want physics so it has to be a rigidbody; doing that with a character controller would take a long ass time
 
-        //PlayerRigidbody.AddForce(NewMovement * MovementSpeed); 
-        PlayerController.Move(NewMovement * (MovementSpeed * Time.deltaTime));
+        PlayerRigidbody.AddForce(NewMovement * (MovementSpeed * Time.deltaTime), ForceMode.VelocityChange);
+        
+
+        //PlayerController.Move(NewMovement * (MovementSpeed * Time.deltaTime));
     }
 
     void HandleCamera() 
@@ -126,6 +147,31 @@ public class Player : MonoBehaviour
         
     }
 
+    void PlayerGroundCast()
+    {
+        RaycastHit Hit;
+        Vector3 NewPos = transform.position;
+
+        if (Physics.SphereCast(transform.position, 0.2f, -Vector3.up, out Hit, 1.0f, GroundMask))
+        {
+            bIsGrounded = true;
+
+            Vector3 CurrentPos = transform.position;
+            NewPos.y = Mathf.Lerp(CurrentPos.y, Hit.point.y + 1.2f, 0.1f / Time.deltaTime);
+
+            if (!Inputs.bIsJumping) 
+            {
+                transform.position = NewPos;
+
+            }
+        }
+
+        else 
+        {
+            bIsGrounded = false;
+        }
+    }
+
     public void SetCameraFOV(float FOV) 
     {
         PlayerCamera.fieldOfView = FOV;
@@ -138,7 +184,7 @@ public class Player : MonoBehaviour
     void HandleGravity() 
     {
         //This is very simple, we want to do more here but this will work for now
-        PlayerController.Move(GravityDir * (GravityForce * Time.deltaTime));
+        PlayerRigidbody.AddForce(GravityDir * (GravityForce * Time.deltaTime), ForceMode.VelocityChange);
     }
 
     void SwitchCurrentWeapon(int Direction) 
@@ -190,5 +236,4 @@ public class Player : MonoBehaviour
 
         }
     }
-
 }

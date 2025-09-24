@@ -11,6 +11,7 @@ public class PlayerInputs : MonoBehaviour
 
     public DeveloperConsole console;
     public float MouseScrollDelta;
+    public bool bIsJumping = false;
     public bool bIsFiring = false;
 
     /*
@@ -54,6 +55,7 @@ public class PlayerInputs : MonoBehaviour
         }
 
         bIsFiring = Input.GetKey(KeyCode.Mouse0);
+        bIsJumping = Input.GetKeyDown(KeyCode.Space);
         MouseScrollDelta = Input.mouseScrollDelta[1];
     }
 
