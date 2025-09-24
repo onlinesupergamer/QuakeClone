@@ -42,6 +42,7 @@ public class Player : MonoBehaviour
                 //try not to get confused about that, X is the Camera pitch
 
     bool bIsGrounded;
+    [SerializeField]float GravityMultiplier = 0.0f;
 
 
     void Awake() 
@@ -98,10 +99,6 @@ public class Player : MonoBehaviour
 
     }
 
-    private void LateUpdate()
-    {
-    }
-
     void HandleMovement() 
     {
         if (!bCanUserInput) return;
@@ -152,12 +149,12 @@ public class Player : MonoBehaviour
         RaycastHit Hit;
         Vector3 NewPos = transform.position;
 
-        if (Physics.SphereCast(transform.position, 0.2f, -Vector3.up, out Hit, 1.0f, GroundMask))
+        if (Physics.SphereCast(transform.position, 0.25f, -Vector3.up, out Hit, 1.0f, GroundMask))
         {
             bIsGrounded = true;
 
             Vector3 CurrentPos = transform.position;
-            NewPos.y = Mathf.Lerp(CurrentPos.y, Hit.point.y + 1.2f, 0.1f / Time.deltaTime);
+            NewPos.y = Mathf.Lerp(CurrentPos.y, Hit.point.y + 1.2f, 0.01f / Time.deltaTime);
 
             if (!Inputs.bIsJumping) 
             {
@@ -183,8 +180,22 @@ public class Player : MonoBehaviour
 
     void HandleGravity() 
     {
+
         //This is very simple, we want to do more here but this will work for now
-        PlayerRigidbody.AddForce(GravityDir * (GravityForce * Time.deltaTime), ForceMode.VelocityChange);
+
+        if (bIsGrounded)
+        {
+            PlayerRigidbody.AddForce(GravityDir * (GravityForce * Time.deltaTime), ForceMode.VelocityChange);
+            GravityMultiplier = 0.0f;
+        }
+        else 
+        {
+            float GravIncreaseRate = 4.0f;
+            GravityMultiplier += Time.deltaTime * GravIncreaseRate;
+            GravityMultiplier = Mathf.Clamp(GravityMultiplier, 0, 2);
+            PlayerRigidbody.AddForce(GravityDir * GravityMultiplier, ForceMode.VelocityChange);
+        }
+
     }
 
     void SwitchCurrentWeapon(int Direction) 
@@ -213,6 +224,7 @@ public class Player : MonoBehaviour
                 }
                     break;
         }
+
         SwapCurrentWeapon(CurrentWeaponIndex);
 
         //I guess this works, but I hate it
