@@ -54,7 +54,7 @@ public class PlayerInputs : MonoBehaviour
 
         }
 
-        bIsFiring = Input.GetKey(KeyCode.Mouse0);
+        bIsFiring = Input.GetKeyDown(KeyCode.Mouse0);
         bIsJumping = Input.GetKeyDown(KeyCode.Space);
         MouseScrollDelta = Input.mouseScrollDelta[1];
     }

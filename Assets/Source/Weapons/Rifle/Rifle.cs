@@ -2,7 +2,12 @@ using UnityEngine;
 
 public class Rifle : Weapon
 {
+    public override void Update()
+    {
+        //base.Update();
 
+
+    }
 
     public override void FireWeapon()
     {
@@ -15,7 +20,8 @@ public class Rifle : Weapon
 
         }
 
-        Debug.DrawLine(mPlayer.PlayerCamera.transform.position, mPlayer.PlayerCamera.transform.forward * 35, Color.aliceBlue, 5.0f);
+        Debug.DrawRay(mPlayer.PlayerCamera.transform.position, mPlayer.PlayerCamera.transform.forward * 15, Color.aliceBlue, 5.0f);
+
     }
 
 }
