@@ -760,11 +760,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6715065642596782614, guid: cbd4881f960262344b665b4382df3860, type: 3}
       propertyPath: JumpForce
-      value: 25
+      value: 18
       objectReference: {fileID: 0}
     - target: {fileID: 6715065642596782614, guid: cbd4881f960262344b665b4382df3860, type: 3}
       propertyPath: GravityForce
-      value: 12
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 7734391307316611444, guid: cbd4881f960262344b665b4382df3860, type: 3}
       propertyPath: console
