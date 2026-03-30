@@ -42,6 +42,7 @@ public class Player : MonoBehaviour
                 //try not to get confused about that, X is the Camera pitch
 
     bool bIsGrounded;
+    
     [SerializeField]float GravityMultiplier = 0.0f;
 
 
